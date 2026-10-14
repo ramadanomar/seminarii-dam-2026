@@ -1,8 +1,9 @@
 package ro.ase.semdam.domeniu;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class Abonament {
+public class Abonament implements Serializable {
     private String nume;
     private String observatii;
     private double cost;
@@ -75,5 +76,18 @@ public class Abonament {
         this.frecventa = frecventa;
         this.activ = activ;
         this.dataReinnoire = dataReinnoire;
+    }
+
+    @Override
+    public String toString() {
+        return "Abonament{" +
+                "nume='" + nume + '\'' +
+                ", observatii='" + observatii + '\'' +
+                ", cost=" + cost +
+                ", nrPersoane=" + nrPersoane +
+                ", frecventa=" + frecventa +
+                ", activ=" + activ +
+                ", dataReinnoire=" + dataReinnoire +
+                '}';
     }
 }

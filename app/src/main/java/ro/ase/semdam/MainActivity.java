@@ -7,18 +7,24 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.IntentCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import ro.ase.semdam.databinding.ActivityMainBinding;
+import ro.ase.semdam.domeniu.Abonament;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
     private ActivityMainBinding binding;
+
+    private ActivityResultLauncher<Intent> addLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +53,21 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+        addLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                if(result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    Abonament abonamentPrimit = IntentCompat.getSerializableExtra(result.getData(), "abonament", Abonament.class);
+                    if(abonamentPrimit != null)
+                    {
+                        Toast.makeText(this,   abonamentPrimit.toString(), Toast.LENGTH_LONG).show();
+                    }
+                }
+        }
+        );
+
         binding.fabAdauga.setOnClickListener(view -> {
             Intent intent = new Intent(this, AddActivity.class);
-            startActivity(intent);
+            addLauncher.launch(intent);
         });
 
         Log.d(TAG, "s-a apelat onCreate");

@@ -1,5 +1,6 @@
 package ro.ase.semdam;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
@@ -13,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 import ro.ase.semdam.databinding.ActivityAddBinding;
 import ro.ase.semdam.domeniu.Abonament;
@@ -45,19 +47,81 @@ public class AddActivity extends AppCompatActivity {
 
         binding.btnSalveaza.setOnClickListener(v -> {
             String nume = binding.etNume.getText().toString().trim();
-            double cost = Double.parseDouble(binding.etCost.getText().toString().trim());
+
+            if(nume.isEmpty())
+            {
+                binding.etNume.setError("Numele este obligatoriu!");
+                return;
+            }
+
+            String observatii = binding.etObservatii.getText().toString();
+
+            if(observatii.isEmpty())
+            {
+                binding.etObservatii.setError("Observatiile sunt obligatorii!");
+                return;
+            }
+
+            double cost;
+            try {
+                cost = Double.parseDouble(binding.etCost.getText().toString().trim());
+            } catch (NumberFormatException e) {
+                binding.etCost.setError("Introdu un cost numeric!");
+                return;
+            }
+
+            if(cost <= 0)
+            {
+                binding.etCost.setError("Introdu un cost pozitiv!");
+                return;
+            }
+
+            int nrPersoane;
+            try {
+                nrPersoane = Integer.parseInt(binding.etNrPersoane.getText().toString().trim());
+            } catch (NumberFormatException e) {
+                binding.etNrPersoane.setError("Nr. persoane trebuie sa fie un numar intreg!");
+                return;
+            }
+            if(nrPersoane < 1 || nrPersoane > 6)
+            {
+                binding.etNrPersoane.setError("Nr. persoane trebuie sa fie intre 1 si 6!");
+                return;
+            }
+
+
             // Uitasem sa adaug isCoreLibraryDesugaringEnabled = true in build.gradle.kts din app.
             // Acum nu ar trebui sa va mai dea eroare de compilare
-            LocalDate data = LocalDate.parse(binding.etDataReinnoire.getText().toString().trim(), DateTimeFormatter.ISO_LOCAL_DATE);
-            String observatii = binding.etObservatii.getText().toString();
-            int nrPersoane = Integer.parseInt(binding.etNrPersoane.getText().toString());
+            LocalDate data;
+            try {
+                data = LocalDate.parse(binding.etDataReinnoire.getText().toString().trim(), DateTimeFormatter.ISO_LOCAL_DATE);
+            } catch (DateTimeParseException e) {
+                binding.etDataReinnoire.setError("Data trebuie sa fie yyyy-MM-dd!");
+                return;
+            }
+            if(data.isBefore(LocalDate.now()))
+            {
+                binding.etDataReinnoire.setError("Data nu poate fi in trecut!");
+                return;
+            }
+
             Frecventa frecventa = Frecventa.dinEticheta(binding.spFrecventa.getSelectedItem().toString());
             int idBifat = binding.rgActiv.getCheckedRadioButtonId();
+            if(idBifat == -1)
+            {
+                Toast.makeText(this, "Selectati statusul!", Toast.LENGTH_SHORT).show();
+                return;
+            }
             boolean activ = idBifat == binding.rbActiv.getId();
 
             Abonament abonament = new Abonament(nume, observatii, cost, nrPersoane, frecventa, activ, data);
             Log.d("AddActivity", abonament.toString());
             Toast.makeText(this, "Salvat: " + abonament.toString(), Toast.LENGTH_LONG).show();
+
+            Intent intent = new Intent();
+            intent.putExtra("abonament", abonament);
+            setResult(RESULT_OK, intent);
+            finish();
         });
     }
 }
