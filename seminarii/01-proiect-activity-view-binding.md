@@ -627,7 +627,9 @@ Documentație: [Intents and Intent Filters](https://developer.android.com/guide/
 | [05-adapter-meniu-fragmente.md](05-adapter-meniu-fragmente.md)             | Adapter personalizat, meniu, fragmente  |
 | [06-retea-xml-bnr.md](06-retea-xml-bnr.md)                                 | Rețea asincronă, XML BNR                |
 | [07-json-sharedpreferences.md](07-json-sharedpreferences.md)               | JSON, SharedPreferences                 |
-| [08-room.md](08-room.md)                                                   | Room (SQLite)                           |
-| [09-firebase.md](09-firebase.md)                                           | Firebase Realtime Database              |
-| [10-grafica-canvas.md](10-grafica-canvas.md)                               | Grafică 2D pe Canvas                    |
-| [11-recapitulare-publicare.md](11-recapitulare-publicare.md)               | Recapitulare, hărți (demo), publicare   |
+| [08-proba1.md](08-proba1.md)                                               | Proba practică 1                        |
+| [09-room.md](09-room.md)                                                   | Room (SQLite)                           |
+| [10-firebase.md](10-firebase.md)                                           | Firebase Realtime Database              |
+| [11-grafica-canvas.md](11-grafica-canvas.md)                               | Grafică 2D pe Canvas                    |
+| [12-proba2.md](12-proba2.md)                                               | Proba practică 2                        |
+| [13-recapitulare-publicare.md](13-recapitulare-publicare.md)               | Recapitulare, hărți (demo), publicare   |

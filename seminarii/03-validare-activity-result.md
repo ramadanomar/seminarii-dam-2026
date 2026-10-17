@@ -410,7 +410,7 @@ binding.btnSalveaza.setOnClickListener(v -> {
 
 ### Live assignment
 
-Primul live assignment din semestru (seminariile cu live assignments: 3, 5, 7 și 10; vezi [README](../README.md)). Completați validarea pentru câmpurile care lipsesc din exemplul de mai sus, pe același tipar (`setError` + `return`). **Cerința exactă (reguli pe câmpuri) se anunță la oră** pe Moodle, separat pe fiecare grupă.
+Primul live assignment din semestru (seminariile cu live assignments: 3, 5, 7 și 11; vezi [README](../README.md)). Completați validarea pentru câmpurile care lipsesc din exemplul de mai sus, pe același tipar (`setError` + `return`). **Cerința exactă (reguli pe câmpuri) se anunță la oră** pe Moodle, separat pe fiecare grupă.
 
 ### Evaluare
 
@@ -448,7 +448,9 @@ Primul live assignment din semestru (seminariile cu live assignments: 3, 5, 7 ș
 | [05-adapter-meniu-fragmente.md](05-adapter-meniu-fragmente.md)             | Adapter personalizat, meniu, fragmente  |
 | [06-retea-xml-bnr.md](06-retea-xml-bnr.md)                                 | Rețea asincronă, XML BNR                |
 | [07-json-sharedpreferences.md](07-json-sharedpreferences.md)               | JSON, SharedPreferences                 |
-| [08-room.md](08-room.md)                                                   | Room (SQLite)                           |
-| [09-firebase.md](09-firebase.md)                                           | Firebase Realtime Database              |
-| [10-grafica-canvas.md](10-grafica-canvas.md)                               | Grafică 2D pe Canvas                    |
-| [11-recapitulare-publicare.md](11-recapitulare-publicare.md)               | Recapitulare, hărți (demo), publicare   |
+| [08-proba1.md](08-proba1.md)                                               | Proba practică 1                        |
+| [09-room.md](09-room.md)                                                   | Room (SQLite)                           |
+| [10-firebase.md](10-firebase.md)                                           | Firebase Realtime Database              |
+| [11-grafica-canvas.md](11-grafica-canvas.md)                               | Grafică 2D pe Canvas                    |
+| [12-proba2.md](12-proba2.md)                                               | Proba practică 2                        |
+| [13-recapitulare-publicare.md](13-recapitulare-publicare.md)               | Recapitulare, hărți (demo), publicare   |

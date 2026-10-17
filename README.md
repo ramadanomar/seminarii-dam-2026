@@ -33,7 +33,7 @@ Punctajul disciplinei este împărțit în două părți egale:
 | **15%**          | Proba practică 2                    | La calculator, **prezență fizică** în laborator (săptămâna **12**)                                                                                                                                                                                  |
 | **20%**          | Implicare activă (live assignments) | **4** exerciții scurte la oră, câte **5%** fiecare. La finalul seminarului verific oral, pe calculatorul vostru. **Totul sau nimic** pe fiecare exercițiu: ori primiți cei 5%, ori 0; nu există punctaj intermediar. Cele 4 bife însumează cei 20%. |
 
-Seminariile cu live assignments: **3, 5, 7** și **10** (câte 5% fiecare). Fiecare live assignment este **totul sau nimic** (fără fracțiuni de punct).
+Seminariile cu live assignments: **3, 5, 7** și **11** (câte 5% fiecare). Fiecare live assignment este **totul sau nimic** (fără fracțiuni de punct).
 
 ### Condiții
 
@@ -190,7 +190,9 @@ Documentație: [Connect to a device over Wi-Fi](https://developer.android.com/to
 | [05-adapter-meniu-fragmente.md](seminarii/05-adapter-meniu-fragmente.md)             | Adapter personalizat, meniu, fragmente  |
 | [06-retea-xml-bnr.md](seminarii/06-retea-xml-bnr.md)                                 | Rețea asincronă, XML BNR                |
 | [07-json-sharedpreferences.md](seminarii/07-json-sharedpreferences.md)               | JSON, SharedPreferences                 |
-| [08-room.md](seminarii/08-room.md)                                                   | Room (SQLite)                           |
-| [09-firebase.md](seminarii/09-firebase.md)                                           | Firebase Realtime Database              |
-| [10-grafica-canvas.md](seminarii/10-grafica-canvas.md)                               | Grafică 2D pe Canvas                    |
-| [11-recapitulare-publicare.md](seminarii/11-recapitulare-publicare.md)               | Recapitulare, hărți (demo), publicare   |
+| [08-proba1.md](seminarii/08-proba1.md)                                               | Proba practică 1                        |
+| [09-room.md](seminarii/09-room.md)                                                   | Room (SQLite)                           |
+| [10-firebase.md](seminarii/10-firebase.md)                                           | Firebase Realtime Database              |
+| [11-grafica-canvas.md](seminarii/11-grafica-canvas.md)                               | Grafică 2D pe Canvas                    |
+| [12-proba2.md](seminarii/12-proba2.md)                                               | Proba practică 2                        |
+| [13-recapitulare-publicare.md](seminarii/13-recapitulare-publicare.md)               | Recapitulare, hărți (demo), publicare   |
