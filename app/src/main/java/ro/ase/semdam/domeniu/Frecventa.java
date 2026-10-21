@@ -10,4 +10,12 @@ public enum Frecventa {
             default -> SAPTAMANAL;
         };
     }
+
+    public static String etichetaDin(Frecventa frecventa) {
+        return switch (frecventa) {
+            case LUNAR -> "Lunar";
+            case ANUAL -> "Anual";
+            default -> "Saptamanal";
+        };
+    }
 }

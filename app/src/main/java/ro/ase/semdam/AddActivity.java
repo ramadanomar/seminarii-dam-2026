@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.IntentCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -44,6 +45,22 @@ public class AddActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         binding.spFrecventa.setAdapter(adapter);
+
+        Abonament existent = IntentCompat.getSerializableExtra(getIntent(), "abonament", Abonament.class);
+        int pozSelectie = getIntent().getIntExtra("pozitie", -1);
+
+        if(existent != null) {
+            binding.etNume.setText(existent.getNume());
+            binding.etObservatii.setText(existent.getObservatii());
+            binding.etCost.setText(String.valueOf(existent.getCost()));
+            binding.etNrPersoane.setText(String.valueOf(existent.getNrPersoane()));
+            binding.spFrecventa.setSelection(adapter.getPosition(Frecventa.etichetaDin(existent.getFrecventa())));
+            if(existent.isActiv())
+                binding.rgActiv.check(binding.rbActiv.getId());
+            else
+                binding.rgActiv.check(binding.rbAnulat.getId());
+            binding.etDataReinnoire.setText(existent.getDataReinnoire().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
 
         binding.btnSalveaza.setOnClickListener(v -> {
             String nume = binding.etNume.getText().toString().trim();
@@ -120,6 +137,7 @@ public class AddActivity extends AppCompatActivity {
 
             Intent intent = new Intent();
             intent.putExtra("abonament", abonament);
+            intent.putExtra("pozitie", pozSelectie);
             setResult(RESULT_OK, intent);
             finish();
         });

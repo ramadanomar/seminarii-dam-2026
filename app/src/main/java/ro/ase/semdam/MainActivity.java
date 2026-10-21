@@ -1,8 +1,10 @@
 package ro.ase.semdam;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -15,6 +17,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ro.ase.semdam.databinding.ActivityMainBinding;
 import ro.ase.semdam.domeniu.Abonament;
 
@@ -25,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
 
     private ActivityResultLauncher<Intent> addLauncher;
+
+    private List<Abonament> abonamente = new ArrayList<>();
+    private ArrayAdapter<Abonament> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,22 +52,32 @@ public class MainActivity extends AppCompatActivity {
 //            Toast.makeText(MainActivity.this, "Salut!", Toast.LENGTH_LONG).show();
 //        });
 
-        Button buton = findViewById(R.id.btnDeschide);
-        buton.setOnClickListener(v -> {
-            Toast.makeText(MainActivity.this, "Salut!", Toast.LENGTH_LONG).show();
-
-            Intent intent = new Intent(MainActivity.this, SecondActivity.class);
-            startActivity(intent);
-
-        });
+        //Button buton = findViewById(R.id.btnDeschide);
+//        buton.setOnClickListener(v -> {
+//            Toast.makeText(MainActivity.this, "Salut!", Toast.LENGTH_LONG).show();
+//
+//            Intent intent = new Intent(MainActivity.this, SecondActivity.class);
+//            startActivity(intent);
+//
+//        });
 
         addLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                 if(result.getResultCode() == RESULT_OK && result.getData() != null) {
                     Abonament abonamentPrimit = IntentCompat.getSerializableExtra(result.getData(), "abonament", Abonament.class);
+                    int pozSelectie = result.getData().getIntExtra("pozitie", -1);
                     if(abonamentPrimit != null)
                     {
+                        if(pozSelectie >= 0)
+                        {
+                            abonamente.set(pozSelectie, abonamentPrimit);
+                        }
+                        else {
+                            abonamente.add(abonamentPrimit);
+                        }
                         Toast.makeText(this,   abonamentPrimit.toString(), Toast.LENGTH_LONG).show();
+//                        abonamente.add(abonamentPrimit);
+                        adapter.notifyDataSetChanged();
                     }
                 }
         }
@@ -68,6 +86,31 @@ public class MainActivity extends AppCompatActivity {
         binding.fabAdauga.setOnClickListener(view -> {
             Intent intent = new Intent(this, AddActivity.class);
             addLauncher.launch(intent);
+        });
+
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, abonamente);
+        // ListView lvElemente = findViewById(R.id.lvAbonamente);
+        binding.lvAbonamente.setAdapter(adapter);
+
+        binding.lvAbonamente.setOnItemClickListener((parent, view, position, id) -> {
+            Abonament selectat = abonamente.get(position);
+            Intent intent = new Intent(this, AddActivity.class);
+            intent.putExtra("abonament", selectat);
+            intent.putExtra("pozitie", position);
+            addLauncher.launch(intent);
+        });
+
+        binding.lvAbonamente.setOnItemLongClickListener((parent, view, position, id) -> {
+            new AlertDialog.Builder(this)
+                    .setTitle("Stergere abonament")
+                    .setMessage("Sigur stergi abonamentul?")
+                    .setPositiveButton("Da", (d, w) -> {
+                        abonamente.remove(position);
+                        adapter.notifyDataSetChanged();
+                    })
+                    .setNegativeButton("Nu", null)
+                    .show();
+            return true;
         });
 
         Log.d(TAG, "s-a apelat onCreate");
