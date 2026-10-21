@@ -39,7 +39,7 @@ Seminariile cu live assignments: **3, 5, 7** și **11** (câte 5% fiecare). Fiec
 
 **Intrare în examen** (toate, cumulativ):
 
-1. cel puțin **70% prezențe** la seminar (din **14** seminarii → cel puțin **10** prezențe);
+1. cel puțin **70% prezențe** la seminar (din **14** seminarii: 70% × 14 = 9,8, trunchiat → cel puțin **9** prezențe);
 2. cel puțin **4 prezențe** la curs;
 3. cel puțin **15%** din nota finală provenită din seminar.
 
