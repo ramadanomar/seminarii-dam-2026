@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Toast;
@@ -11,6 +13,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.IntentCompat;
 import androidx.core.graphics.Insets;
@@ -22,6 +25,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
+import ro.ase.semdam.adapters.CustomAdapter;
 import ro.ase.semdam.databinding.ActivityMainBinding;
 import ro.ase.semdam.domeniu.Anunt;
 
@@ -36,12 +40,44 @@ public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<Anunt> adapter;
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.meniu_principal, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.action_bnr)
+        {
+            Toast.makeText(this, "Curs BNR: va urma...", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        if(id == R.id.action_despre)
+        {
+            Toast.makeText(this, "Aplicatie seminar DAM 1086", Toast.LENGTH_LONG).show();
+            return true;
+        }
+        if(id == R.id.action_total_stoc)
+        {
+            int total = 0;
+            for(Anunt a : anunturi)
+                total += a.getCantitate();
+            Toast.makeText(this, String.valueOf(total), Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        setSupportActionBar(binding.toolbar);
 
         // View Binding: decomentați getRoot (+ binding.main / binding.btnToast mai jos)
         // setContentView(binding.getRoot());
@@ -95,7 +131,8 @@ public class MainActivity extends AppCompatActivity {
             addLauncher.launch(new Intent(this, AddActivity.class));
         });
 
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, anunturi);
+//        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, anunturi);
+        adapter = new CustomAdapter(this, android.R.layout.simple_list_item_1, anunturi);
         // ListView lvAnunturi = findViewById(R.id.lvElemente)
         binding.lvAnunturi.setAdapter(adapter);
 
