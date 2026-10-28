@@ -4,9 +4,13 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
@@ -20,6 +24,7 @@ import androidx.core.view.WindowInsetsCompat;
 import java.util.ArrayList;
 import java.util.List;
 
+import ro.ase.semdam.adapters.CustomAdapter;
 import ro.ase.semdam.databinding.ActivityMainBinding;
 import ro.ase.semdam.domeniu.Abonament;
 
@@ -41,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // tema e NoActionBar: toolbar-ul din layout devine bara pentru options menu
+        setSupportActionBar(binding.toolbar);
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -88,8 +96,9 @@ public class MainActivity extends AppCompatActivity {
             addLauncher.launch(intent);
         });
 
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, abonamente);
-        // ListView lvElemente = findViewById(R.id.lvAbonamente);
+//        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, abonamente);
+        // adapter propriu: randul vine din elem_listview, nu din toString()
+        adapter = new CustomAdapter(this, 0, abonamente);
         binding.lvAbonamente.setAdapter(adapter);
 
         binding.lvAbonamente.setOnItemClickListener((parent, view, position, id) -> {
@@ -114,6 +123,31 @@ public class MainActivity extends AppCompatActivity {
         });
 
         Log.d(TAG, "s-a apelat onCreate");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.meniu_principal, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_despre) {
+            Toast.makeText(this, "Aplicatie seminar DAM", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        if (id == R.id.action_bnr) {
+            // BnrActivity: intr-un seminar viitor; acum doar Toast
+            Toast.makeText(this, "Curs BNR: in curand", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        if (id == R.id.action_fragmente) {
+            startActivity(new Intent(this, HostActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
