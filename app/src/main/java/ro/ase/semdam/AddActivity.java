@@ -1,5 +1,6 @@
 package ro.ase.semdam;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.IntentCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -44,6 +46,27 @@ public class AddActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         binding.spFrecventa.setAdapter(adapter);
+
+        Abonament existent = IntentCompat.getSerializableExtra(
+                getIntent(), MainActivity.ELEMENT, Abonament.class);
+        int pozSelectie = getIntent().getIntExtra(MainActivity.POZ_SELECTIE, -1);
+        if (existent != null) {
+            binding.etNume.setText(existent.getNume());
+            binding.etObservatii.setText(existent.getObservatii());
+            binding.etCost.setText(String.valueOf(existent.getCost()));
+            binding.etNrPersoane.setText(String.valueOf(existent.getNrPersoane()));
+            binding.spFrecventa.setSelection(
+                    adapter.getPosition(Frecventa.etichetaDin(existent.getFrecventa())));
+            if (existent.isActiv()) {
+                binding.rgActiv.check(binding.rbActiv.getId());
+            } else {
+                binding.rgActiv.check(binding.rbAnulat.getId());
+            }
+            binding.etDataReinnoire.setText(
+                    existent.getDataReinnoire().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        }
+
+        binding.etDataReinnoire.setOnClickListener(v -> alegeData());
 
         binding.btnSalveaza.setOnClickListener(v -> {
             String nume = binding.etNume.getText().toString().trim();
@@ -116,12 +139,29 @@ public class AddActivity extends AppCompatActivity {
 
             Abonament abonament = new Abonament(nume, observatii, cost, nrPersoane, frecventa, activ, data);
             Log.d("AddActivity", abonament.toString());
-            Toast.makeText(this, "Salvat: " + abonament.toString(), Toast.LENGTH_LONG).show();
 
             Intent intent = new Intent();
-            intent.putExtra("abonament", abonament);
+            intent.putExtra(MainActivity.ELEMENT, abonament);
+            if (pozSelectie >= 0) {
+                intent.putExtra(MainActivity.POZ_SELECTIE, pozSelectie);
+            }
             setResult(RESULT_OK, intent);
             finish();
         });
+    }
+
+    private void alegeData() {
+        LocalDate initiala;
+        try {
+            initiala = LocalDate.parse(binding.etDataReinnoire.getText().toString(), DateTimeFormatter.ISO_LOCAL_DATE);
+        } catch (DateTimeParseException e) {
+            initiala = LocalDate.now();
+        }
+
+        // DatePicker numara lunile de la 0, LocalDate de la 1
+        new DatePickerDialog(this, (picker, an, luna, zi) -> {
+            binding.etDataReinnoire.setText(LocalDate.of(an, luna + 1, zi).format(DateTimeFormatter.ISO_LOCAL_DATE));
+            binding.etDataReinnoire.setError(null);
+        }, initiala.getYear(), initiala.getMonthValue() - 1, initiala.getDayOfMonth()).show();
     }
 }

@@ -91,7 +91,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rgActiv"
         android:id="@+id/etDataReinnoire"
-        android:hint="Data reinnoire"
+        android:focusable="false"
+        android:hint="Data reinnoire (yyyy-MM-dd)"
         />
 
     <Button
