@@ -46,8 +46,8 @@ public class AddActivity extends AppCompatActivity {
 
         binding.spFrecventa.setAdapter(adapter);
 
-        Abonament existent = IntentCompat.getSerializableExtra(getIntent(), "abonament", Abonament.class);
-        int pozSelectie = getIntent().getIntExtra("pozitie", -1);
+        Abonament existent = IntentCompat.getSerializableExtra(getIntent(), MainActivity.EXTRA_ABONAMENT, Abonament.class);
+        int pozSelectie = getIntent().getIntExtra(MainActivity.EXTRA_POZITIE, -1);
 
         if(existent != null) {
             binding.etNume.setText(existent.getNume());
@@ -136,8 +136,8 @@ public class AddActivity extends AppCompatActivity {
             Toast.makeText(this, "Salvat: " + abonament.toString(), Toast.LENGTH_LONG).show();
 
             Intent intent = new Intent();
-            intent.putExtra("abonament", abonament);
-            intent.putExtra("pozitie", pozSelectie);
+            intent.putExtra(MainActivity.EXTRA_ABONAMENT, abonament);
+            intent.putExtra(MainActivity.EXTRA_POZITIE, pozSelectie);
             setResult(RESULT_OK, intent);
             finish();
         });

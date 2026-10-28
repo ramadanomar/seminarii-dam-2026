@@ -4,16 +4,16 @@
 
     <item
         android:id="@+id/action_bnr"
-        android:title="Curs BNR"
+        android:title="@string/meniu_bnr"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_despre"
-        android:title="Despre"
+        android:title="@string/meniu_despre"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_fragmente"
-        android:title="Fragmente"
+        android:title="@string/meniu_fragmente"
         app:showAsAction="never" />
 </menu>

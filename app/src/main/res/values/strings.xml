@@ -3,4 +3,16 @@
     <string name="salut_1088">Salut, 1088!</string>
     <string name="nume">Nume</string>
     <string name="observatii">Observatii</string>
+
+    <string name="meniu_bnr">Curs BNR</string>
+    <string name="meniu_despre">Despre</string>
+    <string name="meniu_fragmente">Fragmente</string>
+
+    <string name="format_cost">%1$.2f lei</string>
+    <string name="mesaj_despre">Aplicatie seminar DAM</string>
+    <string name="mesaj_bnr">Curs BNR: in curand</string>
+    <string name="titlu_stergere">Stergere abonament</string>
+    <string name="mesaj_stergere">Sigur stergi abonamentul?</string>
+    <string name="da">Da</string>
+    <string name="nu">Nu</string>
 </resources>

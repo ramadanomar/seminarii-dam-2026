@@ -1,20 +1,19 @@
 package ro.ase.semdam;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.IntentCompat;
 import androidx.core.graphics.Insets;
@@ -32,11 +31,15 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
-    private ActivityMainBinding binding;
+    /** Cheile extras-urilor schimbate cu AddActivity. */
+    public static final String EXTRA_ABONAMENT = "abonament";
+    public static final String EXTRA_POZITIE = "pozitie";
+    private static final int POZITIE_NOUA = -1;
 
+    private ActivityMainBinding binding;
     private ActivityResultLauncher<Intent> addLauncher;
 
-    private List<Abonament> abonamente = new ArrayList<>();
+    private final List<Abonament> abonamente = new ArrayList<>();
     private ArrayAdapter<Abonament> adapter;
 
     @Override
@@ -56,73 +59,69 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-//        binding.btnDeschide.setOnClickListener(v -> {
-//            Toast.makeText(MainActivity.this, "Salut!", Toast.LENGTH_LONG).show();
-//        });
+        addLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), this::onRezultatAdd);
 
-        //Button buton = findViewById(R.id.btnDeschide);
-//        buton.setOnClickListener(v -> {
-//            Toast.makeText(MainActivity.this, "Salut!", Toast.LENGTH_LONG).show();
-//
-//            Intent intent = new Intent(MainActivity.this, SecondActivity.class);
-//            startActivity(intent);
-//
-//        });
+        configureazaLista();
 
-        addLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                if(result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    Abonament abonamentPrimit = IntentCompat.getSerializableExtra(result.getData(), "abonament", Abonament.class);
-                    int pozSelectie = result.getData().getIntExtra("pozitie", -1);
-                    if(abonamentPrimit != null)
-                    {
-                        if(pozSelectie >= 0)
-                        {
-                            abonamente.set(pozSelectie, abonamentPrimit);
-                        }
-                        else {
-                            abonamente.add(abonamentPrimit);
-                        }
-                        Toast.makeText(this,   abonamentPrimit.toString(), Toast.LENGTH_LONG).show();
-//                        abonamente.add(abonamentPrimit);
-                        adapter.notifyDataSetChanged();
-                    }
-                }
-        }
-        );
-
-        binding.fabAdauga.setOnClickListener(view -> {
-            Intent intent = new Intent(this, AddActivity.class);
-            addLauncher.launch(intent);
-        });
-
-//        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, abonamente);
-        // adapter propriu: randul vine din elem_listview, nu din toString()
-        adapter = new CustomAdapter(this, 0, abonamente);
-        binding.lvAbonamente.setAdapter(adapter);
-
-        binding.lvAbonamente.setOnItemClickListener((parent, view, position, id) -> {
-            Abonament selectat = abonamente.get(position);
-            Intent intent = new Intent(this, AddActivity.class);
-            intent.putExtra("abonament", selectat);
-            intent.putExtra("pozitie", position);
-            addLauncher.launch(intent);
-        });
-
-        binding.lvAbonamente.setOnItemLongClickListener((parent, view, position, id) -> {
-            new AlertDialog.Builder(this)
-                    .setTitle("Stergere abonament")
-                    .setMessage("Sigur stergi abonamentul?")
-                    .setPositiveButton("Da", (d, w) -> {
-                        abonamente.remove(position);
-                        adapter.notifyDataSetChanged();
-                    })
-                    .setNegativeButton("Nu", null)
-                    .show();
-            return true;
-        });
+        binding.fabAdauga.setOnClickListener(v -> deschideFormular(null, POZITIE_NOUA));
 
         Log.d(TAG, "s-a apelat onCreate");
+    }
+
+    private void configureazaLista() {
+        adapter = new CustomAdapter(this, abonamente);
+        binding.lvAbonamente.setAdapter(adapter);
+
+        binding.lvAbonamente.setOnItemClickListener((parent, view, position, id) ->
+                deschideFormular(abonamente.get(position), position));
+
+        binding.lvAbonamente.setOnItemLongClickListener((parent, view, position, id) -> {
+            confirmaStergere(position);
+            return true;
+        });
+    }
+
+    /** Deschide AddActivity gol (abonament null) sau precompletat pentru editare. */
+    private void deschideFormular(Abonament abonament, int pozitie) {
+        Intent intent = new Intent(this, AddActivity.class);
+        if (abonament != null) {
+            intent.putExtra(EXTRA_ABONAMENT, abonament);
+            intent.putExtra(EXTRA_POZITIE, pozitie);
+        }
+        addLauncher.launch(intent);
+    }
+
+    private void onRezultatAdd(ActivityResult result) {
+        Intent data = result.getData();
+        if (result.getResultCode() != RESULT_OK || data == null) {
+            return;
+        }
+
+        Abonament abonament = IntentCompat.getSerializableExtra(data, EXTRA_ABONAMENT, Abonament.class);
+        if (abonament == null) {
+            return;
+        }
+
+        int pozitie = data.getIntExtra(EXTRA_POZITIE, POZITIE_NOUA);
+        if (pozitie == POZITIE_NOUA) {
+            abonamente.add(abonament);
+        } else {
+            abonamente.set(pozitie, abonament);
+        }
+        adapter.notifyDataSetChanged();
+    }
+
+    private void confirmaStergere(int pozitie) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.titlu_stergere)
+                .setMessage(R.string.mesaj_stergere)
+                .setPositiveButton(R.string.da, (dialog, which) -> {
+                    abonamente.remove(pozitie);
+                    adapter.notifyDataSetChanged();
+                })
+                .setNegativeButton(R.string.nu, null)
+                .show();
     }
 
     @Override
@@ -135,12 +134,12 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_despre) {
-            Toast.makeText(this, "Aplicatie seminar DAM", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.mesaj_despre, Toast.LENGTH_SHORT).show();
             return true;
         }
         if (id == R.id.action_bnr) {
-            // BnrActivity: intr-un seminar viitor; acum doar Toast
-            Toast.makeText(this, "Curs BNR: in curand", Toast.LENGTH_SHORT).show();
+            // BnrActivity vine intr-un seminar viitor
+            Toast.makeText(this, R.string.mesaj_bnr, Toast.LENGTH_SHORT).show();
             return true;
         }
         if (id == R.id.action_fragmente) {
