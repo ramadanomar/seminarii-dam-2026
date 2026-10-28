@@ -36,4 +36,13 @@
         app:layout_constraintStart_toEndOf="@id/tvCost"
         tools:text="Lunar" />
 
+    <TextView
+        android:id="@+id/tvNrPersoane"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBaseline_toBaselineOf="@id/tvCost"
+        app:layout_constraintStart_toEndOf="@id/tvFrecventa"
+        tools:text="3 persoane" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

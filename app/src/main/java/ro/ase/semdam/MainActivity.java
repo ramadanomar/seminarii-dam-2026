@@ -133,6 +133,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
+        if (id == R.id.action_total_persoane) {
+            afiseazaTotalPersoane();
+            return true;
+        }
         if (id == R.id.action_despre) {
             Toast.makeText(this, R.string.mesaj_despre, Toast.LENGTH_SHORT).show();
             return true;
@@ -147,6 +151,15 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /** Suma nrPersoane din lista; pe lista goala afiseaza 0. */
+    private void afiseazaTotalPersoane() {
+        int total = 0;
+        for (Abonament abonament : abonamente) {
+            total += abonament.getNrPersoane();
+        }
+        Toast.makeText(this, getString(R.string.mesaj_total_persoane, total), Toast.LENGTH_LONG).show();
     }
 
     @Override

@@ -4,11 +4,17 @@
     <string name="nume">Nume</string>
     <string name="observatii">Observatii</string>
 
+    <string name="meniu_total_persoane">Total persoane</string>
     <string name="meniu_bnr">Curs BNR</string>
     <string name="meniu_despre">Despre</string>
     <string name="meniu_fragmente">Fragmente</string>
 
     <string name="format_cost">%1$.2f lei</string>
+    <string name="mesaj_total_persoane">Total persoane: %1$d</string>
+    <plurals name="format_nr_persoane">
+        <item quantity="one">%1$d persoana</item>
+        <item quantity="other">%1$d persoane</item>
+    </plurals>
     <string name="mesaj_despre">Aplicatie seminar DAM</string>
     <string name="mesaj_bnr">Curs BNR: in curand</string>
     <string name="titlu_stergere">Stergere abonament</string>
