@@ -1,5 +1,6 @@
 package ro.ase.semdam;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -61,6 +62,9 @@ public class AddActivity extends AppCompatActivity {
                 binding.rgActiv.check(binding.rbAnulat.getId());
             binding.etDataReinnoire.setText(existent.getDataReinnoire().format(DateTimeFormatter.ISO_LOCAL_DATE));
         }
+
+        // campul nu e editabil de la tastatura: la click se deschide un DatePicker
+        binding.etDataReinnoire.setOnClickListener(v -> alegeData());
 
         binding.btnSalveaza.setOnClickListener(v -> {
             String nume = binding.etNume.getText().toString().trim();
@@ -141,5 +145,20 @@ public class AddActivity extends AppCompatActivity {
             setResult(RESULT_OK, intent);
             finish();
         });
+    }
+
+    private void alegeData() {
+        LocalDate initiala;
+        try {
+            initiala = LocalDate.parse(binding.etDataReinnoire.getText().toString(), DateTimeFormatter.ISO_LOCAL_DATE);
+        } catch (DateTimeParseException e) {
+            initiala = LocalDate.now();
+        }
+
+        // DatePicker numara lunile de la 0, LocalDate de la 1
+        new DatePickerDialog(this, (picker, an, luna, zi) -> {
+            binding.etDataReinnoire.setText(LocalDate.of(an, luna + 1, zi).format(DateTimeFormatter.ISO_LOCAL_DATE));
+            binding.etDataReinnoire.setError(null);
+        }, initiala.getYear(), initiala.getMonthValue() - 1, initiala.getDayOfMonth()).show();
     }
 }
