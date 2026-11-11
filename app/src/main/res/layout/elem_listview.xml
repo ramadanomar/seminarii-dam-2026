@@ -1,43 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="12dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:padding="12dp">
 
     <TextView
+        android:id="@+id/tvNume"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:id="@+id/tvNume"
         android:textSize="16sp"
         android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
+        tools:text="Netflix" />
 
     <TextView
+        android:id="@+id/tvCost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tvCost"
         android:layout_marginTop="4dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvNume"/>
+        app:layout_constraintTop_toBottomOf="@id/tvNume"
+        tools:text="49.99 lei" />
 
     <TextView
+        android:id="@+id/tvFrecventa"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         app:layout_constraintBaseline_toBaselineOf="@id/tvCost"
         app:layout_constraintStart_toEndOf="@id/tvCost"
-        android:id="@+id/tvFrecventa"/>
+        tools:text="Lunar" />
 
     <TextView
+        android:id="@+id/tvNrPersoane"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tvNrPersoane"
         android:layout_marginStart="16dp"
         app:layout_constraintBaseline_toBaselineOf="@id/tvCost"
-        app:layout_constraintStart_toEndOf="@id/tvFrecventa"/>
+        app:layout_constraintStart_toEndOf="@id/tvFrecventa"
+        tools:text="3 persoane" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
