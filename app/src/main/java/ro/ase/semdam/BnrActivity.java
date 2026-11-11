@@ -21,7 +21,13 @@ import ro.ase.semdam.retea.CursValutar;
 
 public class BnrActivity extends AppCompatActivity {
 
+    private static final String MONEDA_EUR = "EUR";
+    private static final String MONEDA_USD = "USD";
+
     private ActivityBnrBinding binding;
+
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,36 +37,44 @@ public class BnrActivity extends AppCompatActivity {
         binding = ActivityBnrBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Handler mainHandler = new Handler(Looper.getMainLooper());
-
-        binding.btnActualizeaza.setOnClickListener(view -> {
-            binding.btnActualizeaza.setEnabled(false);
-            executor.execute(() -> {try {
-                List<CursValutar> cursuri = BnrClient.descarca();
-                mainHandler.post(() -> {
-                    for(CursValutar curs : cursuri) {
-                        if("EUR".equals(curs.getMoneda()))
-                            binding.tvEur.setText("EUR: "+curs.getValoare());
-                        else if ("USD".equals(curs.getMoneda())) {
-                            binding.tvUsd.setText("USD: "+curs.getValoare());
-                        }
-                    }
-                });
-            } catch (Exception e) {
-                mainHandler.post(() -> {
-                    Toast.makeText(this, "Eroare retea: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-            }
-            finally {
-                mainHandler.post(() -> {binding.btnActualizeaza.setEnabled(true);});
-            }});
-        });
-
         ViewCompat.setOnApplyWindowInsetsListener(binding.main, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        binding.btnActualizeaza.setOnClickListener(v -> actualizeazaCursuri());
+    }
+
+    /** Descarca XML-ul BNR pe executor si scrie EUR/USD pe main thread. */
+    private void actualizeazaCursuri() {
+        binding.btnActualizeaza.setEnabled(false);
+        executor.execute(() -> {
+            try {
+                List<CursValutar> cursuri = BnrClient.descarca();
+                mainHandler.post(() -> afiseazaCursuri(cursuri));
+            } catch (Exception e) {
+                mainHandler.post(() -> Toast.makeText(this,
+                        getString(R.string.mesaj_eroare_retea, e.getMessage()), Toast.LENGTH_SHORT).show());
+            } finally {
+                mainHandler.post(() -> binding.btnActualizeaza.setEnabled(true));
+            }
+        });
+    }
+
+    private void afiseazaCursuri(List<CursValutar> cursuri) {
+        for (CursValutar curs : cursuri) {
+            if (MONEDA_EUR.equals(curs.getMoneda())) {
+                binding.tvEur.setText(getString(R.string.format_curs, MONEDA_EUR, curs.getValoare()));
+            } else if (MONEDA_USD.equals(curs.getMoneda())) {
+                binding.tvUsd.setText(getString(R.string.format_curs, MONEDA_USD, curs.getValoare()));
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        executor.shutdownNow();
     }
 }

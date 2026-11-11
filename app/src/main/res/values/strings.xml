@@ -3,7 +3,37 @@
     <string name="salut_1088">Salut, 1088!</string>
     <string name="nume">Nume</string>
     <string name="observatii">Observatii</string>
+
+    <!-- BnrActivity -->
     <string name="eur">EUR:</string>
     <string name="usd">USD:</string>
     <string name="actualizeaza">Actualizeaza</string>
+    <string name="format_curs">%1$s: %2$.4f</string>
+    <string name="mesaj_eroare_retea">Eroare retea: %1$s</string>
+
+    <!-- Meniul principal -->
+    <string name="meniu_total_persoane">Total persoane</string>
+    <string name="meniu_bnr">Curs BNR</string>
+    <string name="meniu_despre">Despre</string>
+    <string name="meniu_json">Incarca JSON</string>
+    <string name="meniu_ultima">Ultima incarcare</string>
+
+    <!-- Lista de abonamente -->
+    <string name="format_cost">%1$.2f lei</string>
+    <string name="mesaj_total_persoane">Total persoane: %1$d</string>
+    <plurals name="format_nr_persoane">
+        <item quantity="one">%1$d persoana</item>
+        <item quantity="other">%1$d persoane</item>
+    </plurals>
+    <string name="mesaj_despre">Aplicatie seminar DAM 1088</string>
+    <string name="titlu_stergere">Stergere abonament</string>
+    <string name="mesaj_stergere">Sigur stergi abonamentul?</string>
+    <string name="da">Da</string>
+    <string name="nu">Nu</string>
+
+    <!-- Seminar 7: JSON + SharedPreferences -->
+    <string name="mesaj_incarcat">Incarcat: %1$d</string>
+    <string name="mesaj_eroare_json">Eroare JSON: %1$s</string>
+    <string name="mesaj_incarcare_in_curs">Incarcarea e deja in curs</string>
+    <string name="format_ultima_incarcare">Ultima incarcare: %1$d</string>
 </resources>

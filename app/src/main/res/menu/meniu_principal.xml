@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/action_bnr"
-        android:title="Curs BNR"
-        app:showAsAction="never"
-        />
 
     <item
-        android:id="@+id/action_despre"
-        android:title="Despre"
-        app:showAsAction="never"
-        />
+        android:id="@+id/action_json"
+        android:title="@string/meniu_json"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_ultima"
+        android:title="@string/meniu_ultima"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_total_persoane"
-        android:title="Total persoane"
-        app:showAsAction="never"
-        />
+        android:title="@string/meniu_total_persoane"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_bnr"
+        android:title="@string/meniu_bnr"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_despre"
+        android:title="@string/meniu_despre"
+        app:showAsAction="never" />
 </menu>
