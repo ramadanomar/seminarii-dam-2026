@@ -2,8 +2,6 @@ package ro.ase.semdam;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,18 +19,21 @@ import androidx.core.content.IntentCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import ro.ase.semdam.adapters.CustomAdapter;
 import ro.ase.semdam.databinding.ActivityMainBinding;
 import ro.ase.semdam.domeniu.Abonament;
-import ro.ase.semdam.json.IncarcareJson;
-import ro.ase.semdam.preferinte.PreferinteIncarcare;
+import ro.ase.semdam.viewmodel.AbonamenteViewModel;
+import ro.ase.semdam.viewmodel.RezultatIncarcare;
 
+/**
+ * Ecranul cu lista. Nu mai tine datele: le ia din AbonamenteViewModel (care supravietuieste rotirii)
+ * si doar le afiseaza; orice modificare a listei trece prin ViewModel.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
@@ -44,16 +45,14 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private ActivityResultLauncher<Intent> addLauncher;
+    private AbonamenteViewModel viewModel;
 
-    private final List<Abonament> abonamente = new ArrayList<>();
+    /** Copia afisata de adapter; se reumple din ViewModel la fiecare schimbare a listei. */
+    private final List<Abonament> randuri = new ArrayList<>();
     private ArrayAdapter<Abonament> adapter;
 
-    /** Un singur fir de fundal pentru retea, refolosit la fiecare click (nu cate un executor nou). */
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    /** Trimite rezultatul inapoi pe main thread: doar acolo avem voie sa atingem View-urile. */
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
-    /** Blocheaza click-urile repetate pe "Incarca JSON" cat timp o descarcare e in curs. */
-    private boolean incarcareInCurs = false;
+    /** Oglinda lui viewModel.getSeIncarca(), folosita in onPrepareOptionsMenu. */
+    private boolean seIncarca = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +71,14 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        // dupa rotire, ViewModelProvider intoarce ACEEASI instanta, nu una noua
+        viewModel = new ViewModelProvider(this).get(AbonamenteViewModel.class);
+
         addLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), this::onRezultatAdd);
 
         configureazaLista();
+        observaViewModel();
 
         binding.fabAdauga.setOnClickListener(v -> deschideFormular(null, POZITIE_NOUA));
 
@@ -83,16 +86,50 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void configureazaLista() {
-        adapter = new CustomAdapter(this, abonamente);
+        adapter = new CustomAdapter(this, randuri);
         binding.lvAbonamente.setAdapter(adapter);
 
         binding.lvAbonamente.setOnItemClickListener((parent, view, position, id) ->
-                deschideFormular(abonamente.get(position), position));
+                deschideFormular(randuri.get(position), position));
 
         binding.lvAbonamente.setOnItemLongClickListener((parent, view, position, id) -> {
             confirmaStergere(position);
             return true;
         });
+    }
+
+    /**
+     * Observatorii sunt legati de ciclul de viata al acestui Activity (this): primesc valori doar cat
+     * ecranul e vizibil si se dezaboneaza singuri la onDestroy, deci nu raman agatati de Activity-ul vechi.
+     */
+    private void observaViewModel() {
+        viewModel.getAbonamente().observe(this, lista -> {
+            randuri.clear();
+            randuri.addAll(lista);
+            adapter.notifyDataSetChanged();
+        });
+
+        viewModel.getSeIncarca().observe(this, incarca -> {
+            seIncarca = incarca;
+            invalidateOptionsMenu(); // reface meniul -> onPrepareOptionsMenu
+        });
+
+        viewModel.getRezultatIncarcare().observe(this, eveniment -> {
+            RezultatIncarcare rezultat = eveniment.consuma();
+            if (rezultat != null) {
+                afiseazaRezultatIncarcare(rezultat);
+            }
+        });
+    }
+
+    private void afiseazaRezultatIncarcare(RezultatIncarcare rezultat) {
+        if (rezultat.isSucces()) {
+            Toast.makeText(this, getString(R.string.mesaj_incarcat, rezultat.getNrIncarcate()),
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, getString(R.string.mesaj_eroare_json, rezultat.getMesajEroare()),
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     /** Deschide AddActivity gol (abonament null) sau precompletat pentru editare. */
@@ -118,21 +155,17 @@ public class MainActivity extends AppCompatActivity {
 
         int pozitie = data.getIntExtra(EXTRA_POZITIE, POZITIE_NOUA);
         if (pozitie == POZITIE_NOUA) {
-            abonamente.add(abonament);
+            viewModel.adauga(abonament);
         } else {
-            abonamente.set(pozitie, abonament);
+            viewModel.inlocuieste(pozitie, abonament);
         }
-        adapter.notifyDataSetChanged();
     }
 
     private void confirmaStergere(int pozitie) {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.titlu_stergere)
                 .setMessage(R.string.mesaj_stergere)
-                .setPositiveButton(R.string.da, (dialog, which) -> {
-                    abonamente.remove(pozitie);
-                    adapter.notifyDataSetChanged();
-                })
+                .setPositiveButton(R.string.da, (dialog, which) -> viewModel.sterge(pozitie))
                 .setNegativeButton(R.string.nu, null)
                 .show();
     }
@@ -143,11 +176,21 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /** "Incarca JSON" e dezactivat cat timp o descarcare e in curs (inclusiv dupa o rotire). */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem itemJson = menu.findItem(R.id.action_json);
+        if (itemJson != null) {
+            itemJson.setEnabled(!seIncarca);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_json) {
-            incarcaJson();
+            viewModel.incarcaJson();
             return true;
         }
         if (id == R.id.action_ultima) {
@@ -156,7 +199,8 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         if (id == R.id.action_total_persoane) {
-            afiseazaTotalPersoane();
+            Toast.makeText(this, getString(R.string.mesaj_total_persoane, viewModel.totalPersoane()),
+                    Toast.LENGTH_LONG).show();
             return true;
         }
         if (id == R.id.action_bnr) {
@@ -172,62 +216,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * Descarca si parseaza JSON-ul pe executor; lista, adapterul si SharedPreferences
-     * se actualizeaza pe main thread, doar daca descarcarea si parsarea au reusit.
-     */
-    private void incarcaJson() {
-        if (incarcareInCurs) {
-            Toast.makeText(this, R.string.mesaj_incarcare_in_curs, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        incarcareInCurs = true;
-
-        executor.execute(() -> {
-            try {
-                String text = IncarcareJson.descarca();
-                List<Abonament> citite = IncarcareJson.dinText(text);
-                mainHandler.post(() -> afiseazaAbonamenteIncarcate(citite));
-            } catch (Exception e) {
-                Log.e(TAG, "Incarcarea JSON a esuat", e);
-                mainHandler.post(() -> afiseazaEroareJson(e));
-            }
-        });
-    }
-
-    private void afiseazaAbonamenteIncarcate(List<Abonament> citite) {
-        incarcareInCurs = false;
-        if (isDestroyed()) {
-            return;
-        }
-
-        abonamente.clear();
-        abonamente.addAll(citite);
-        adapter.notifyDataSetChanged();
-
-        // in prefs pastram doar un numar mic, nu toata colectia
-        PreferinteIncarcare.salveazaNrIncarcate(this, citite.size());
-
-        Toast.makeText(this, getString(R.string.mesaj_incarcat, citite.size()), Toast.LENGTH_SHORT).show();
-    }
-
-    private void afiseazaEroareJson(Exception e) {
-        incarcareInCurs = false;
-        if (isDestroyed()) {
-            return;
-        }
-        Toast.makeText(this, getString(R.string.mesaj_eroare_json, e.getMessage()), Toast.LENGTH_LONG).show();
-    }
-
-    /** Suma nrPersoane din lista; pe lista goala afiseaza 0. */
-    private void afiseazaTotalPersoane() {
-        int total = 0;
-        for (Abonament abonament : abonamente) {
-            total += abonament.getNrPersoane();
-        }
-        Toast.makeText(this, getString(R.string.mesaj_total_persoane, total), Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -257,8 +245,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // oprim firul de fundal odata cu ecranul; altfel ramane viu dupa ce Activity-ul moare
-        executor.shutdownNow();
         Log.d(TAG, "onDestroy!!!");
     }
 

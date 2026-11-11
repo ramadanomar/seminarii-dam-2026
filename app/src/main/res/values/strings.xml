@@ -35,7 +35,6 @@
     <!-- Seminar 7: JSON + SharedPreferences -->
     <string name="mesaj_incarcat">Incarcat: %1$d</string>
     <string name="mesaj_eroare_json">Eroare JSON: %1$s</string>
-    <string name="mesaj_incarcare_in_curs">Incarcarea e deja in curs</string>
     <string name="format_ultima_incarcare">Ultima incarcare: %1$d</string>
 
     <!-- HostActivity + fragmente -->
