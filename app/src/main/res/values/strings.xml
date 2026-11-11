@@ -15,6 +15,7 @@
     <string name="meniu_total_persoane">Total persoane</string>
     <string name="meniu_bnr">Curs BNR</string>
     <string name="meniu_despre">Despre</string>
+    <string name="meniu_fragmente">Fragmente</string>
     <string name="meniu_json">Incarca JSON</string>
     <string name="meniu_ultima">Ultima incarcare</string>
 
@@ -36,4 +37,9 @@
     <string name="mesaj_eroare_json">Eroare JSON: %1$s</string>
     <string name="mesaj_incarcare_in_curs">Incarcarea e deja in curs</string>
     <string name="format_ultima_incarcare">Ultima incarcare: %1$d</string>
+
+    <!-- HostActivity + fragmente -->
+    <string name="comuta_fragment">Comuta fragment</string>
+    <string name="fragment_lista">Fragment lista</string>
+    <string name="fragment_info">Fragment info</string>
 </resources>

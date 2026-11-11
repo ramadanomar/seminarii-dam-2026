@@ -167,6 +167,10 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.mesaj_despre, Toast.LENGTH_SHORT).show();
             return true;
         }
+        if (id == R.id.action_fragmente) {
+            startActivity(new Intent(this, HostActivity.class));
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 

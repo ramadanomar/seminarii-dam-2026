@@ -26,4 +26,9 @@
         android:id="@+id/action_despre"
         android:title="@string/meniu_despre"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_fragmente"
+        android:title="@string/meniu_fragmente"
+        app:showAsAction="never" />
 </menu>
