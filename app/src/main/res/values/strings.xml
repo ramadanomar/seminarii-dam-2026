@@ -36,6 +36,8 @@
     <string name="mesaj_incarcat">Incarcat: %1$d</string>
     <string name="mesaj_eroare_json">Eroare JSON: %1$s</string>
     <string name="format_ultima_incarcare">Ultima incarcare: %1$d</string>
+    <!-- live assignment seminar 7: textul exact din cerinta -->
+    <string name="mesaj_ultima_incarcare_active">Ultima încărcare: %1$d</string>
 
     <!-- HostActivity + fragmente -->
     <string name="comuta_fragment">Comuta fragment</string>

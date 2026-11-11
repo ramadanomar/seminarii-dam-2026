@@ -42,7 +42,8 @@ public final class IncarcareJson {
     }
 
     /**
-     * Parseaza vectorul de abonamente.
+     * Parseaza vectorul de abonamente. Obiectele cu observatii goale sunt sarite
+     * (nu intra in lista), dar parsarea continua cu restul vectorului.
      * getString/getDouble/getInt/getBoolean arunca JSONException daca cheia lipseste
      * sau are alt tip; LocalDate.parse arunca DateTimeParseException pe alt format decat yyyy-MM-dd.
      */
@@ -50,9 +51,18 @@ public final class IncarcareJson {
         JSONArray vector = new JSONArray(text);
         List<Abonament> rezultat = new ArrayList<>(vector.length());
         for (int i = 0; i < vector.length(); i++) {
-            rezultat.add(dinObiect(vector.getJSONObject(i)));
+            JSONObject o = vector.getJSONObject(i);
+            if (areObservatiiGoale(o)) {
+                continue; // sarim doar obiectul acesta, nu oprim restul fisierului
+            }
+            rezultat.add(dinObiect(o));
         }
         return rezultat;
+    }
+
+    /** optString intoarce "" si cand cheia lipseste, deci acoperim si cazul fara observatii. */
+    private static boolean areObservatiiGoale(JSONObject o) {
+        return o.optString(CHEIE_OBSERVATII).trim().isEmpty();
     }
 
     private static Abonament dinObiect(JSONObject o) throws JSONException {

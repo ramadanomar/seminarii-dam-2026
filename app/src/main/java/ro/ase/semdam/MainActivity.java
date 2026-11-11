@@ -27,6 +27,7 @@ import java.util.List;
 import ro.ase.semdam.adapters.CustomAdapter;
 import ro.ase.semdam.databinding.ActivityMainBinding;
 import ro.ase.semdam.domeniu.Abonament;
+import ro.ase.semdam.preferinte.PreferinteIncarcare;
 import ro.ase.semdam.viewmodel.AbonamenteViewModel;
 import ro.ase.semdam.viewmodel.RezultatIncarcare;
 
@@ -82,7 +83,19 @@ public class MainActivity extends AppCompatActivity {
 
         binding.fabAdauga.setOnClickListener(v -> deschideFormular(null, POZITIE_NOUA));
 
+        // doar la deschiderea reala a ecranului, nu si la recrearea dupa rotire
+        if (savedInstanceState == null) {
+            afiseazaUltimaIncarcare();
+        }
+
         Log.d(TAG, "s-a apelat onCreate");
+    }
+
+    /** Toast cu nr_active din SharedPreferences (0 daca nu s-a facut inca nicio incarcare). */
+    private void afiseazaUltimaIncarcare() {
+        int nrActive = PreferinteIncarcare.citesteNrActive(this);
+        Toast.makeText(this, getString(R.string.mesaj_ultima_incarcare_active, nrActive),
+                Toast.LENGTH_SHORT).show();
     }
 
     private void configureazaLista() {

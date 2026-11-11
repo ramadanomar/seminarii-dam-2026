@@ -117,11 +117,21 @@ public class AbonamenteViewModel extends AndroidViewModel {
         abonamente.addAll(citite);
         publicaLista();
 
-        // in prefs pastram doar un numar mic, nu toata colectia
-        PreferinteIncarcare.salveazaNrIncarcate(getApplication(), citite.size());
+        // in prefs pastram doar numere mici, nu toata colectia
+        PreferinteIncarcare.salveazaIncarcare(getApplication(), citite.size(), numaraActive(citite));
 
         seIncarca.setValue(false);
         rezultatIncarcare.setValue(new Eveniment<>(RezultatIncarcare.succes(citite.size())));
+    }
+
+    private static int numaraActive(List<Abonament> lista) {
+        int nrActive = 0;
+        for (Abonament abonament : lista) {
+            if (abonament.isActiv()) {
+                nrActive++;
+            }
+        }
+        return nrActive;
     }
 
     /** Ecranul primeste o copie nemodificabila: lista interna se schimba doar prin metodele de mai sus. */
